@@ -8,6 +8,7 @@ exec_always xrdb -merge ~/.Xresources
 
 exec --no-startup-id xsetroot -cursor_name left_ptr
 
+# fastcompmgr，比picom更加轻量化
 exec --no-startup-id fastcompmgr -o 0 -r 0 -m 1.0
 
 exec --no-startup-id fcitx5
@@ -22,15 +23,18 @@ exec --no-startup-id lxpolkit
 # 完美的 xsettingsd 启动与重载方案：延迟1秒避开竞态，清理旧进程，静默拉起新进程
 exec_always --no-startup-id sh -c "sleep 1; killall xsettingsd 2>/dev/null; xsettingsd &"
 
+
 # exec --no-startup-id xsettingsd
 
 # exec_always --no-startup-id picom -b
 
+# 打开上传文件时选取的框
 exec --no-startup-id /usr/libexec/xdg-desktop-portal
 exec --no-startup-id /usr/libexec/xdg-desktop-portal-gtk
 
 # exec_always --no-startup-id sh -c "sleep 1 && killall -HUP xsettingsd"
 
+# 自动打开numlock
 exec_always --no-startup-id numlockx on
 
 # 延迟2秒执行，确保X服务就绪，一次性完美注入NVIDIA所有画面防撕裂与VRR配置
@@ -43,6 +47,7 @@ exec --no-startup-id xset s off
 exec --no-startup-id xset -dpms
 exec --no-startup-id xset s noblank
 
+# 壁纸
 exec_always --no-startup-id feh --bg-fill ~/下载/1.jpg
 
 title_align center
