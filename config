@@ -1,0 +1,193 @@
+################## jpy的i3配置 ###################
+
+######## 一些开机启动之类的 ##########
+
+# exec 和 exec_always 的运行机制有本质区别，exec（你目前用的）： 只在 i3 第一次完全启动（也就是你刚开机登录进桌面时） 执行一次。当你按下 Win+Shift+r（重启 i3 进程）时，i3 为了防止程序被重复启动导致冲突，绝对不会 再次运行带有 exec 的命令。exec_always： 无论是开机第一次启动，还是每次你按 Win+Shift+r 刷新桌面，它都会重新执行一遍。
+
+exec_always xrdb -merge ~/.Xresources
+
+exec --no-startup-id xsetroot -cursor_name left_ptr
+
+exec --no-startup-id fastcompmgr -o 0 -r 0 -m 1.0
+
+exec --no-startup-id fcitx5
+
+exec --no-startup-id greenclip daemon
+
+exec --no-startup-id lxpolkit
+
+# 每次开机或重启 i3，都先强杀旧的，再启动新的
+# exec_always --no-startup-id killall xsettingsd; xsettingsd
+
+# 完美的 xsettingsd 启动与重载方案：延迟1秒避开竞态，清理旧进程，静默拉起新进程
+exec_always --no-startup-id sh -c "sleep 1; killall xsettingsd 2>/dev/null; xsettingsd &"
+
+# exec --no-startup-id xsettingsd
+
+# exec_always --no-startup-id picom -b
+
+exec --no-startup-id /usr/libexec/xdg-desktop-portal
+exec --no-startup-id /usr/libexec/xdg-desktop-portal-gtk
+
+# exec_always --no-startup-id sh -c "sleep 1 && killall -HUP xsettingsd"
+
+exec_always --no-startup-id numlockx on
+
+# 延迟2秒执行，确保X服务就绪，一次性完美注入NVIDIA所有画面防撕裂与VRR配置
+exec --no-startup-id sh -c "sleep 2 && \
+nvidia-settings --assign 'CurrentMetaMode=nvidia-auto-select +0+0 {ForceCompositionPipeline=On, AllowGSYNCCompatible=On}' && \
+nvidia-settings -a AllowVRR=1 -a ShowVRRVisualIndicator=1"
+
+# 禁用屏幕自动关闭（DPMS）
+exec --no-startup-id xset s off
+exec --no-startup-id xset -dpms
+exec --no-startup-id xset s noblank
+
+exec_always --no-startup-id feh --bg-fill ~/下载/1.jpg
+
+title_align center
+
+# 引入主题文件 
+
+include ~/.config/i3/one.conf
+
+workspace_layout default
+
+############## gaps #################
+
+# gaps inner 2
+# gaps outer 1
+smart_gaps on
+smart_borders on
+
+set $mod Mod4
+font pango: Sans-serif 12
+
+exec --no-startup-id dex --autostart --environment i3
+exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
+exec --no-startup-id nm-applet
+
+floating_modifier $mod
+tiling_drag modifier titlebar
+
+# for_window [class=".*"] floating enable
+
+# 让所有浮动窗口默认居中，并设置宽高（比如 1024x768）
+# floating_minimum_size 400 x 300
+# floating_maximum_size 1920 x 1080
+
+# 基础快捷键
+bindsym $mod+Return exec alacritty
+bindsym $mod+Shift+q kill
+# bindsym Print exec --no-startup-id cinnamon-screenshot -i
+bindsym $mod+d exec --no-startup-id rofi -show drun 
+# 焦点切换 (Vim 风格)
+bindsym $mod+j focus left
+bindsym $mod+k focus down
+bindsym $mod+l focus up
+bindsym $mod+semicolon focus right
+
+# 焦点切换 (方向键)
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+# 移动窗口 (Vim 风格)
+bindsym $mod+Shift+j move left
+bindsym $mod+Shift+k move down
+bindsym $mod+Shift+l move up
+bindsym $mod+Shift+semicolon move right
+
+# 移动窗口 (方向键)
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+bindsym $mod+h split h
+bindsym $mod+v split v
+bindsym $mod+f fullscreen toggle
+
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+# ====== 浮动切换核心快捷键 ======
+bindsym $mod+z floating toggle
+bindsym $mod+space focus mode_toggle
+
+# 暂存区
+bindsym $mod+Shift+minus move scratchpad
+bindsym $mod+minus scratchpad show
+
+bindsym $mod+a focus parent
+
+# 工作区定义
+set $ws1 "1"
+set $ws2 "2"
+set $ws3 "3"
+set $ws4 "4"
+set $ws5 "5"
+set $ws6 "6"
+set $ws7 "7"
+set $ws8 "8"
+set $ws9 "9"
+set $ws10 "10"
+
+bindsym $mod+1 workspace number $ws1
+bindsym $mod+2 workspace number $ws2
+bindsym $mod+3 workspace number $ws3
+bindsym $mod+4 workspace number $ws4
+bindsym $mod+5 workspace number $ws5
+bindsym $mod+6 workspace number $ws6
+bindsym $mod+7 workspace number $ws7
+bindsym $mod+8 workspace number $ws8
+bindsym $mod+9 workspace number $ws9
+bindsym $mod+0 workspace number $ws10
+
+bindsym $mod+Shift+1 move container to workspace number $ws1
+bindsym $mod+Shift+2 move container to workspace number $ws2
+bindsym $mod+Shift+3 move container to workspace number $ws3
+bindsym $mod+Shift+4 move container to workspace number $ws4
+bindsym $mod+Shift+5 move container to workspace number $ws5
+bindsym $mod+Shift+6 move container to workspace number $ws6
+bindsym $mod+Shift+7 move container to workspace number $ws7
+bindsym $mod+Shift+8 move container to workspace number $ws8
+bindsym $mod+Shift+9 move container to workspace number $ws9
+bindsym $mod+Shift+0 move container to workspace number $ws10
+
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+r restart
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
+
+# 调整大小模式
+mode "resize" {
+        bindsym j resize shrink width 10 px or 10 ppt
+        bindsym k resize grow height 10 px or 10 ppt
+        bindsym l resize shrink height 10 px or 10 ppt
+        bindsym semicolon resize grow width 10 px or 10 ppt
+        bindsym Left resize shrink width 10 px or 10 ppt
+        bindsym Down resize grow height 10 px or 10 ppt
+        bindsym Up resize shrink height 10 px or 10 ppt
+        bindsym Right resize grow width 10 px or 10 ppt
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+        bindsym $mod+r mode "default"
+}
+bindsym $mod+r mode "resize"
+
+# 音量与亮度控制
+bindsym F3 exec --no-startup-id pamixer --increase 5
+bindsym F2 exec --no-startup-id pamixer --decrease 5
+bindsym F1 exec --no-startup-id pamixer --toggle-mute
+bindsym XF86MonBrightnessUp exec --no-startup-id brightnessctl set 5%+
+bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl set 5%-
+
+# 剪贴板
+bindsym $mod+c exec --no-startup-id rofi -modi "clipboard:greenclip print" -show clipboard -run-command '{cmd}'
+
+# 强制 Portal 文件选择器浮动，并设置一个舒服的初始大小
+for_window [class="Xdg-desktop-portal-gtk"] floating enable, resize set 900 650, move position center
+
+

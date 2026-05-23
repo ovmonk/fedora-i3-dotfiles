@@ -1,0 +1,12 @@
+{
+    "colorscheme": "one-dark",
+    "savecursor": true,
+    "saveundo": true,
+    "scrollbar": true,
+    "showchars": "tab=\u003e,space=.,itab=|\u003e,ispace=|",
+    "softwrap": true,
+    "tabstospaces": true,
+    "truecolor": "on",
+    "whitespaces": true,
+    "wordwrap": true
+}

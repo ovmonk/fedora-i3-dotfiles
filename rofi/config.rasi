@@ -1,0 +1,27 @@
+/* ==========================================================================
+   Rofi 现代主题配置文件 (Fedora 44 / i3wm)
+   ========================================================================== */
+
+/* 1. 配置块必须放在最前，防止被外部主题覆盖 */
+configuration {
+    icon-theme: "Papirus";
+    font: "monospace 18";
+    show-icons: false;
+}
+
+/* 2. 引入基础主题 */
+@theme "/usr/share/rofi/themes/Arc-Dark.rasi"
+
+/* 3. 针对元素组件的个性化微调 */
+element-text {
+  padding: 8px 8px; 
+  vertical-align: 0.5;  
+}
+
+/* element-icon { */
+/*   padding: 8px 8px; */
+/*   size: 32px; */          /* 固定图标大小 */
+/*   vertical-align: 0.5; */    /* 图标垂直居中 */
+/* } */
+
+/* 别忘了最后留一行空行 */
