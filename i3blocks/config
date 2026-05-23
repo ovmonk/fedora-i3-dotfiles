@@ -1,0 +1,41 @@
+# 全局属性设置 (One-Dark 风格)
+separator=true
+separator_block_width=25
+markup=pango
+
+# 1. CPU 温度模块 (One-Dark 绿色)
+[cpu_temp]
+label=CPU: 
+command=sensors | grep -E '(Package id 0|Core 0|Tctl)' | head -n 1 | awk '{print $4}' | tr -d '+'
+interval=2
+color=#98c379
+
+# 2. GPU 显卡温度模块 (One-Dark 蓝色)
+[gpu_temp]
+label=GPU: 
+command=echo "$(nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits)°C"
+interval=2
+color=#61afef
+
+# 3. 音量控制模块 (One-Dark 黄色 - 支持滚轮和点击)
+[volume]
+label=VOL: 
+command=case $BLOCK_BUTTON in 4) wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ ;; 5) wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- ;; 1) wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle ;; esac; wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print int($2*100)"%"}'
+interval=once
+signal=10
+color=#e5c07b
+
+# 4. 亮度控制模块 (One-Dark 青色 - 支持滚轮)
+[brightness]
+label=BRI: 
+command=case $BLOCK_BUTTON in 4) light -A 5 ;; 5) light -U 5 ;; esac; light -G | cut -d'.' -f1 | awk '{print $1"%"}'
+interval=once
+signal=11
+color=#56b6c2
+
+# 5. 时间日期模块 (One-Dark 紫色)
+[time]
+label= 
+command=date '+%Y-%m-%d %H:%M:%S'
+interval=1
+color=#c678dd
