@@ -1,0 +1,28 @@
+[global]
+    # === One Dark 全局视觉微调 ===
+    frame_color = "#61afef"               # 默认全局边框使用 One Dark 经典蓝
+    separator_color = "#3e4452"           # 分隔线使用中灰
+    font = Cantarell Regular, Noto Sans CJK SC 11
+    # 进度条与高亮颜色（用于音量、亮度等通知）
+    highlight = "#61afef"
+
+[urgency_low]
+    # 低紧急度：低调的深灰与暗字
+    background = "#282c34"
+    foreground = "#5c6370"
+    frame_color = "#3e4452"
+    timeout = 5
+
+[urgency_normal]
+    # 普通通知：标准 One Dark 灰底白字，配经典蓝边框
+    background = "#282c34"
+    foreground = "#abb2bf"
+    frame_color = "#61afef"
+    timeout = 10
+
+[urgency_critical]
+    # 严重警告：醒目的红框与红字提示
+    background = "#282c34"
+    foreground = "#e06c75"
+    frame_color = "#e06c75"
+    timeout = 0
