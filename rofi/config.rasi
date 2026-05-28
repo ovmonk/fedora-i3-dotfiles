@@ -1,27 +1,47 @@
 /* ==========================================================================
-   Rofi 现代主题配置文件 (Fedora 44 / i3wm)
+   Rofi 现代主题配置文件 (One Dark 纯文字极简版)
    ========================================================================== */
 
-/* 1. 配置块必须放在最前，防止被外部主题覆盖 */
+/* 1. 配置块（彻底剥离图标配置） */
 configuration {
-    icon-theme: "Papirus";
-    font: "monospace 18";
-    show-icons: false;
+    font: "sans-serif medium 18";
+    show-icons: false; /* 👈 核心：死死关掉图标显示 */
+    drun-display-format: "{name} <span foreground='#5c6370'>({generic})</span>";
+
+    /* 清除默认冲突快捷键 */
+    kb-element-next: "";
+    kb-element-prev: "";
+
+    /* Alt+Tab 丝滑切窗口 */
+    kb-row-down: "Alt+Tab,Down";
+    kb-row-up: "Alt+ISO_Left_Tab,Up";
 }
 
-/* 2. 引入基础主题 */
+/* 2. 引入基础布局 */
 @theme "/usr/share/rofi/themes/Arc-Dark.rasi"
 
-/* 3. 针对元素组件的个性化微调 */
-element-text {
-  padding: 8px 8px; 
-  vertical-align: 0.5;  
+/* 3. One Dark 色彩强行注入 */
+* {
+    background:                  #282c34; 
+    foreground:                  #abb2bf; 
+    
+    selected-normal-background:  #61afef; 
+    selected-normal-foreground:  #282c34; 
+
+    normal-background:           @background;
+    normal-foreground:           @foreground;
+
+    alternate-normal-background: @background;
+    alternate-normal-foreground: @foreground;
+
+    border-color:                #3e4452;
+    separatorcolor:              #3e4452;
 }
 
-/* element-icon { */
-/*   padding: 8px 8px; */
-/*   size: 32px; */          /* 固定图标大小 */
-/*   vertical-align: 0.5; */    /* 图标垂直居中 */
-/* } */
+/* 4. 文本组件微调 */
+element-text {
+    padding: 8px 12px; /* 👈 稍微加宽了左侧内边距，没有图标挡着，文字呼吸感更好 */
+    vertical-align: 0.5;  
+}
 
 /* 别忘了最后留一行空行 */
