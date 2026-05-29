@@ -6,6 +6,7 @@
 
 exec_always xrdb -merge ~/.Xresources
 
+# 在 i3 启动时，把鼠标光标从 X11 默认的那个难看的大叉形光标 ✛ 改成正常的箭头光标 ↖
 exec --no-startup-id xsetroot -cursor_name left_ptr
 
 # fastcompmgr，比picom更加轻量化
@@ -38,17 +39,24 @@ exec --no-startup-id /usr/libexec/xdg-desktop-portal-gtk
 exec_always --no-startup-id numlockx on
 
 # 延迟2秒执行，确保X服务就绪，一次性完美注入NVIDIA所有画面防撕裂与VRR配置
-exec --no-startup-id sh -c "sleep 2 && \
-nvidia-settings --assign 'CurrentMetaMode=nvidia-auto-select +0+0 {ForceCompositionPipeline=On, AllowGSYNCCompatible=On}' && \
-nvidia-settings -a AllowVRR=1 -a ShowVRRVisualIndicator=1"
+# exec --no-startup-id sh -c "sleep 2 && \
+# nvidia-settings --assign 'CurrentMetaMode=nvidia-auto-select +0+0 {ForceCompositionPipeline=On, AllowGSYNCCompatible=On}' && \
+# nvidia-settings -a AllowVRR=1 -a ShowVRRVisualIndicator=1"
 
-# 禁用屏幕自动关闭（DPMS）
-exec --no-startup-id xset s off
-exec --no-startup-id xset -dpms
-exec --no-startup-id xset s noblank
+# 1. NVIDIA 专属配置（只在开机时用 exec 执行一次）
+exec --no-startup-id sh -c "sleep 2; nvidia-settings --assign 'CurrentMetaMode=nvidia-auto-select +0+0 {ForceCompositionPipeline=On, AllowGSYNCCompatible=On}'; nvidia-settings -a AllowVRR=1 -a ShowVRRVisualIndicator=1"
+
+# 2. 不让屏幕灭屏配置（用 exec_always，先开启、再清零、后关闭，彻底驯服 NVIDIA）
+exec_always --no-startup-id sh -c "sleep 3; xset s off; xset s noblank; xset +dpms; xset dpms 0 0 0; xset -dpms"
+
 
 # 壁纸
 exec_always --no-startup-id feh --bg-fill ~/下载/1.jpg
+
+# xclip是micro与外界互相复制粘贴的纽带。xclip 是一个命令行工具，它的唯一工作就是：把终端里的数据，直接塞进 X11 系统的剪贴板通道；或者反过来，把系统剪贴板里的东西导出来。有时候你发现用 Ctrl+V 粘不出来东西，试着点一下鼠标中键，往往会有奇效。这就是 Linux 桌面奇妙（且偶尔让人抓狂）的底层设计。不需要随i3启动。仅在此记录。
+
+# 开机或重启 i3 时，直接通过 shell 一行流清理并重启 Polybar
+exec_always --no-startup-id sh -c "killall -q polybar; while pgrep -x polybar >/dev/null; do sleep 0.1; done; polybar main >/dev/null 2>&1"
 
 title_align center
 
@@ -69,7 +77,10 @@ set $mod Mod4
 font pango: Sans-serif 12
 
 exec --no-startup-id dex --autostart --environment i3
-exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
+
+# 禁用自动锁屏，方法是把这一行注释掉。
+# exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
+
 exec --no-startup-id nm-applet
 
 floating_modifier $mod
@@ -86,6 +97,10 @@ bindsym $mod+Return exec alacritty
 bindsym $mod+Shift+q kill
 # bindsym Print exec --no-startup-id cinnamon-screenshot -i
 bindsym $mod+d exec --no-startup-id rofi -show drun 
+
+# 按下 Alt+Tab，只负责单纯地唤醒 Rofi 窗口模式
+bindsym Mod1+Tab exec --no-startup-id rofi -show window
+
 # 焦点切换 (Vim 风格)
 bindsym $mod+j focus left
 bindsym $mod+k focus down
@@ -192,7 +207,35 @@ bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl set 5%-
 # 剪贴板
 bindsym $mod+c exec --no-startup-id rofi -modi "clipboard:greenclip print" -show clipboard -run-command '{cmd}'
 
-# 强制 Portal 文件选择器浮动，并设置一个舒服的初始大小
+# 强制 Portal 文件选择器浮动，并设置一个舒服的初始大小。浏览器上传文件显示灰屏、白屏等的元凶。
 for_window [class="Xdg-desktop-portal-gtk"] floating enable, resize set 900 650, move position center
 
+# 禁用屏幕自动关闭（DPMS）——改到文件最末尾，并换成 exec_always
+# exec_always --no-startup-id xset s off
+# exec_always --no-startup-id xset -dpms
+# exec_always --no-startup-id xset s noblank
 
+# 把配置末尾的三行改成延迟执行，确保在 nvidia-settings 之后覆盖
+# exec_always --no-startup-id sh -c "sleep 3 && xset s off && xset -dpms && xset s noblank"
+
+# 完美修复 WPS 演示 (wpp) 控件、下拉菜单自动平铺/全屏的问题
+for_window [class="^wpp$" title="^wpp$"] floating enable, border none
+
+# 顺便修复 WPS 文字 (wps) 和 WPS 表格 (et) 的同类已知问题
+for_window [class="^wps$" title="^wps$"] floating enable, border none
+for_window [class="^et$" title="^et$"] floating enable, border none
+
+# ==============================================================================
+# Maim + Slop 极速截图流 (通过外部脚本调用)
+# ==============================================================================
+
+# sudo dnf install maim xclip xdotool
+
+# 1. 区域截图直接进剪贴板
+bindsym Print exec --no-startup-id ~/.config/i3/scripts/screenshot.sh region
+
+# 2. 捕捉当前聚焦窗口进剪贴板
+bindsym $mod+Print exec --no-startup-id ~/.config/i3/scripts/screenshot.sh window
+
+# 3. 区域截图 -> 保存文件 + 进剪贴板
+bindsym $mod+Shift+s exec --no-startup-id ~/.config/i3/scripts/screenshot.sh save
