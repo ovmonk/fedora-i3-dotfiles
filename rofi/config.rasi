@@ -6,7 +6,9 @@
 configuration {
     font: "sans-serif medium 18";
     show-icons: false; /* 👈 核心：死死关掉图标显示 */
-    drun-display-format: "{name} <span foreground='#5c6370'>({generic})</span>";
+    
+    /* 💡 核心修改：用 [...] 把前置空格和整个 Pango 样式包起来 */
+    drun-display-format: "{name}[ <span foreground='#5c6370'>({generic})</span>]";
 
     /* 清除默认冲突快捷键 */
     kb-element-next: "";
