@@ -1,0 +1,13 @@
+[Desktop Entry]
+Categories=Office;
+Comment=Your online library
+Exec=bash -c "echo Xft.dpi:96 | xrdb -merge; /usr/bin/flatpak run --branch=stable --arch=x86_64 --command=readest.sh --file-forwarding com.bilingify.readest @@u %u @@ & sleep 0.2; echo Xft.dpi:144 | xrdb -merge"
+Icon=com.bilingify.readest
+Name=Readest
+Terminal=false
+Type=Application
+MimeType=application/epub+zip;application/x-mobipocket-ebook;application/vnd.amazon.ebook;application/vnd.amazon.mobi8-ebook;application/x-fictionbook+xml;application/vnd.comicbook+zip;application/pdf;x-scheme-handler/readest
+X-Desktop-File-Install-Version=0.28
+
+X-Flatpak-RenamedFrom=Readest.desktop;
+X-Flatpak=com.bilingify.readest
