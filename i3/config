@@ -78,9 +78,9 @@ set $mod Mod4
 # 1. 强行把全局字体设大（比如 24），以此来把整个标题栏的“盒子”撑高 
 # 2. 用 title_format 匹配所有窗口，把文字本身缩回 16，并在两边加空格
 
-font pango: Noto Sans CJK SC 20
+font pango: Noto Sans CJK SC 18
 
-for_window [class=".*"] title_format "<span font='Adwaita Sans 16'>  %title  </span>"
+for_window [class=".*"] title_format "<span font='Adwaita Sans, Noto Sans CJK SC 16'>  %title  </span>"
 
 
 exec --no-startup-id dex --autostart --environment i3
